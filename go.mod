@@ -1,4 +1,4 @@
-module github.com/cakobob/go-keycloak-middleware
+module github.com/erajayatech/go-keycloak-middleware
 
 go 1.15
 

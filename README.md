@@ -78,7 +78,7 @@ Please read for key `authorization` in `permission scope`, this package is inten
 # Example: Setup in Route
 * Import package in route setting file.
 ```go
-import keycloakmiddleware "github.com/cakobob/go-keycloak-middleware"
+import keycloakmiddleware "github.com/erajayatech/go-keycloak-middleware"
 ```
 * Setup in route
 for example we have scope `order:view`, `order:list`, and `order:update`.
