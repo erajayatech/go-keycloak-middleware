@@ -13,7 +13,7 @@ Specific JWT Validation Middleware for Keycloak Authorization Permission Scope.
 # Install
 Go Version 1.15+
 ```
-go get github.com/cakobob/go-keycloak-middleware
+go get github.com/erajayatech/go-keycloak-middleware
 ```
 
 # Setup Environment
