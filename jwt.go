@@ -17,7 +17,7 @@ func Construct(wrapperCode int) middleware {
 	return middleware{wrapperCode: wrapperCode}
 }
 
-func (middleware *middleware) validate(scopes []string) gin.HandlerFunc {
+func (middleware *middleware) Validate(scopes []string) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		s := strings.SplitN(context.Request.Header.Get("Authorization"), " ", 2)
 		if len(s) != 2 {

@@ -87,8 +87,8 @@ app := gin.Default()
 scopeMiddleware := keycloakmiddleware.Construct(0) // 0: default wrapper, 1: standard wrapper, 2: traceable wrapper
 api := app.Group("/api")
 {
-    api.GET("/order", scopeMiddleware.validate([]string{"order:view", "order:list"}), orderListHandler)
-    api.PUT("/order/:id", scopeMiddleware.validate([]string{"order:update"}), orderUpdateHandler)
+    api.GET("/order", scopeMiddleware.Validate([]string{"order:view", "order:list"}), orderListHandler)
+    api.PUT("/order/:id", scopeMiddleware.Validate([]string{"order:update"}), orderUpdateHandler)
 }
 ```
 
