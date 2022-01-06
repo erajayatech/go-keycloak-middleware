@@ -9,12 +9,20 @@ import (
 	"time"
 )
 
-func ValidateJWT(scopes []string) gin.HandlerFunc {
+type middleware struct {
+	wrapperCode int // 0: default, 1:standard, 2:traceable
+}
+
+func Construct(wrapperCode int) middleware {
+	return middleware{wrapperCode: wrapperCode}
+}
+
+func (middleware *middleware) validate(scopes []string) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		s := strings.SplitN(context.Request.Header.Get("Authorization"), " ", 2)
 		if len(s) != 2 {
 			msg := "Authorization token is not found"
-			context.AbortWithStatusJSON(http.StatusUnauthorized, wrapper(msg, nil))
+			context.AbortWithStatusJSON(http.StatusUnauthorized, middleware.wrapper(context, msg, nil))
 			return
 		}
 
@@ -22,7 +30,7 @@ func ValidateJWT(scopes []string) gin.HandlerFunc {
 		unverifiedToken, err := jwt.Parse([]byte(headerToken))
 		if err != nil {
 			msg := err.Error()
-			context.AbortWithStatusJSON(http.StatusInternalServerError, wrapper(msg, nil))
+			context.AbortWithStatusJSON(http.StatusInternalServerError, middleware.wrapper(context, msg, nil))
 			return
 		}
 
@@ -30,21 +38,21 @@ func ValidateJWT(scopes []string) gin.HandlerFunc {
 		key, err := getPublicKey(kid)
 		if err != nil {
 			msg := err.Error()
-			context.AbortWithStatusJSON(http.StatusUnauthorized, wrapper(msg, nil))
+			context.AbortWithStatusJSON(http.StatusUnauthorized, middleware.wrapper(context, msg, nil))
 			return
 		}
 
 		verifier, err := jwt.NewVerifierRS(jwt.RS256, key)
 		if err != nil {
 			msg := err.Error()
-			context.AbortWithStatusJSON(http.StatusInternalServerError, wrapper(msg, nil))
+			context.AbortWithStatusJSON(http.StatusInternalServerError, middleware.wrapper(context, msg, nil))
 			return
 		}
 
 		token, err := jwt.ParseAndVerifyString(headerToken, verifier)
 		if err != nil {
 			msg := err.Error()
-			context.AbortWithStatusJSON(http.StatusInternalServerError, wrapper(msg, nil))
+			context.AbortWithStatusJSON(http.StatusInternalServerError, middleware.wrapper(context, msg, nil))
 			return
 		}
 
@@ -52,26 +60,26 @@ func ValidateJWT(scopes []string) gin.HandlerFunc {
 		errClaims := json.Unmarshal(token.RawClaims(), &claims)
 		if errClaims != nil {
 			msg := errClaims.Error()
-			context.AbortWithStatusJSON(http.StatusUnauthorized, wrapper(msg, nil))
+			context.AbortWithStatusJSON(http.StatusUnauthorized, middleware.wrapper(context, msg, nil))
 			return
 		}
 
 		var iss = getEnv("KEYCLOAK_JWT_ISS")
 		if claims.Issuer != iss {
 			msg := "Token issuer is not valid"
-			context.AbortWithStatusJSON(http.StatusUnauthorized, wrapper(msg, nil))
+			context.AbortWithStatusJSON(http.StatusUnauthorized, middleware.wrapper(context, msg, nil))
 			return
 		}
 
 		if claims.ExpiresAt.Unix() < time.Now().Unix() {
 			msg := "Token expired"
-			context.AbortWithStatusJSON(http.StatusUnauthorized, wrapper(msg, nil))
+			context.AbortWithStatusJSON(http.StatusUnauthorized, middleware.wrapper(context, msg, nil))
 			return
 		}
 
 		if !isScopesValid(claims, scopes) {
 			msg := "Access to this endpoint is not allowed"
-			context.AbortWithStatusJSON(http.StatusForbidden, wrapper(msg, nil))
+			context.AbortWithStatusJSON(http.StatusForbidden, middleware.wrapper(context, msg, nil))
 			return
 		}
 	}
