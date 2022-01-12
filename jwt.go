@@ -30,7 +30,7 @@ func (middleware *middleware) Validate(scopes []string) gin.HandlerFunc {
 		unverifiedToken, err := jwt.Parse([]byte(headerToken))
 		if err != nil {
 			msg := err.Error()
-			context.AbortWithStatusJSON(http.StatusInternalServerError, middleware.wrapper(context, msg, nil))
+			context.AbortWithStatusJSON(http.StatusUnauthorized, middleware.wrapper(context, msg, nil))
 			return
 		}
 
@@ -45,14 +45,14 @@ func (middleware *middleware) Validate(scopes []string) gin.HandlerFunc {
 		verifier, err := jwt.NewVerifierRS(jwt.RS256, key)
 		if err != nil {
 			msg := err.Error()
-			context.AbortWithStatusJSON(http.StatusInternalServerError, middleware.wrapper(context, msg, nil))
+			context.AbortWithStatusJSON(http.StatusUnauthorized, middleware.wrapper(context, msg, nil))
 			return
 		}
 
 		token, err := jwt.ParseAndVerifyString(headerToken, verifier)
 		if err != nil {
 			msg := err.Error()
-			context.AbortWithStatusJSON(http.StatusInternalServerError, middleware.wrapper(context, msg, nil))
+			context.AbortWithStatusJSON(http.StatusUnauthorized, middleware.wrapper(context, msg, nil))
 			return
 		}
 
@@ -82,5 +82,7 @@ func (middleware *middleware) Validate(scopes []string) gin.HandlerFunc {
 			context.AbortWithStatusJSON(http.StatusForbidden, middleware.wrapper(context, msg, nil))
 			return
 		}
+
+		context.Next()
 	}
 }
