@@ -17,6 +17,11 @@ go get github.com/erajayatech/go-keycloak-middleware
 ```
 
 # Setup Environment
+* KEYCLOAK_JWT_ENABLED
+```.env
+example in .env file: 
+KEYCLOAK_JWT_ENABLED=1
+```
 * KEYCLOAK_JWT_ISS
 ```.env
 example in .env file: 

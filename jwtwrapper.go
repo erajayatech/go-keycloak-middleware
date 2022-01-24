@@ -4,18 +4,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (middleware *middleware) wrapper(context *gin.Context, message interface{}, data interface{}) map[string]interface{} {
+func (middleware *middleware) wrapper(status int, context *gin.Context, message interface{}, data interface{}) map[string]interface{} {
 	if middleware.wrapperCode == 2 {
 		return middleware.traceableWrapper(context, message, data)
 	} else if middleware.wrapperCode == 1 {
 		return middleware.standardWrapper(message, data)
 	} else {
-		return middleware.defaultWrapper(message, data)
+		return middleware.defaultWrapper(status, message, data)
 	}
 }
 
-func (middleware *middleware) defaultWrapper(message interface{}, data interface{}) map[string]interface{} {
+func (middleware *middleware) defaultWrapper(status int, message interface{}, data interface{}) map[string]interface{} {
 	return gin.H{
+		"status":        status,
 		"error_message": message,
 		"data":          data,
 	}
