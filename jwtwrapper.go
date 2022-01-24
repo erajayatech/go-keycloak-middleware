@@ -30,8 +30,9 @@ func (middleware *middleware) standardWrapper(message interface{}, data interfac
 }
 
 func (middleware *middleware) traceableWrapper(context *gin.Context, message interface{}, data interface{}) map[string]interface{} {
+	var traceID = context.GetString("X-Trace-Id")
 	return gin.H{
-		"id":      context.GetHeader("X-Trace-Id"),
+		"id":      traceID,
 		"appName": getEnvOrDefault("APP_NAME", nil),
 		"version": getEnvOrDefault("APP_VERSION", nil),
 		"build":   getEnvOrDefault("BUILD", nil),
