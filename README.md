@@ -79,6 +79,7 @@ Payload:
 ```
 
 Please read for key `authorization` in `permission scope`, this package is intended to validate that section.
+This package also attach `name` as `keycloak_name`, `preferred_username` as `keycloak_username`, and `email` as `keycloak_email` in gin context.
 
 # Example: Setup in Route
 * Import package in route setting file.
@@ -95,6 +96,15 @@ api := app.Group("/api")
     api.GET("/order", scopeMiddleware.Validate([]string{"order:view", "order:list"}), orderListHandler)
     api.PUT("/order/:id", scopeMiddleware.Validate([]string{"order:update"}), orderUpdateHandler)
 }
+```
+
+# Example: Retrieve Additional Data in Context
+This package attach jwt payload `name` as `keycloak_name`, `preferred_username` as `keycloak_username`, and `email` as `keycloak_email` in gin context.
+When you want to get that data from context in your handler, then just do something like this:
+```go
+username := context.GetString("keycloak_username")
+name := context.GetString("keycloak_name")
+email := context.GetString("keycloak_email")
 ```
 
 # License

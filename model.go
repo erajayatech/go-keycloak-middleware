@@ -7,6 +7,9 @@ import "github.com/cristalhq/jwt/v3"
 type claims struct {
 	jwt.StandardClaims
 	Authorization authorization `json:"authorization,omitempty"`
+	Username      string        `json:"preferred_username,omitempty"`
+	Name          string        `json:"name,omitempty"`
+	Email         string        `json:"email,omitempty"`
 }
 
 type authorization struct {

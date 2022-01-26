@@ -90,6 +90,9 @@ func (middleware *middleware) Validate(scopes []string) gin.HandlerFunc {
 			return
 		}
 
+		context.Set("keycloak_username", claims.Username)
+		context.Set("keycloak_name", claims.Name)
+		context.Set("keycloak_email", claims.Email)
 		context.Next()
 	}
 }
