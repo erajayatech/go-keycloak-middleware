@@ -64,3 +64,21 @@ func isScopesValid(claims claims, scopes []string) bool {
 	}
 	return false
 }
+
+func isScopesValidNew(claims claims, scopes []string) bool {
+	scopeMap := make(map[string]struct{})
+
+	for _, search := range scopes {
+		scopeMap[search] = struct{}{}
+	}
+
+	for _, permission := range claims.Authorization.Permissions {
+		for _, scope := range permission.Scopes {
+			if _, exists := scopeMap[scope]; exists {
+				return true
+			}
+		}
+	}
+
+	return false
+}
