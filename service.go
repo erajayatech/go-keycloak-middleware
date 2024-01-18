@@ -53,14 +53,19 @@ func getPublicKey(kid string) (*rsa.PublicKey, error) {
 }
 
 func isScopesValid(claims claims, scopes []string) bool {
+	scopeMap := make(map[string]struct{})
+
 	for _, search := range scopes {
-		for _, permission := range claims.Authorization.Permissions {
-			for _, scope := range permission.Scopes {
-				if search == scope {
-					return true
-				}
+		scopeMap[search] = struct{}{}
+	}
+
+	for _, permission := range claims.Authorization.Permissions {
+		for _, scope := range permission.Scopes {
+			if _, exists := scopeMap[scope]; exists {
+				return true
 			}
 		}
 	}
+
 	return false
 }
