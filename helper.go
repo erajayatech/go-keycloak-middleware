@@ -2,8 +2,6 @@ package keycloakmiddleware
 
 import (
 	"encoding/base64"
-	"github.com/joho/godotenv"
-	"log"
 	"math/big"
 	"os"
 )
@@ -17,12 +15,6 @@ func getEnvOrDefault(key string, defaultValue interface{}) interface{} {
 }
 
 func getEnv(key string) string {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("Cannot load file .env: ", err)
-		panic(err)
-	}
-
 	value := getEnvOrDefault(key, "").(string)
 	return value
 }
